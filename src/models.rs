@@ -1,11 +1,17 @@
-#[derive(Debug)]
+//Generated file [Do not change]
+
+#[allow(non_snake_case)]
+#[derive(Debug,Clone,serde::Deserialize)]
 #[generate_controller]
 pub struct Location {
     pub id: i32,
     pub state: String,
 }
 
-#[derive(Debug)]
+//Generated file [Do not change]
+
+#[allow(non_snake_case)]
+#[derive(Debug,Clone,serde::Deserialize)]
 #[generate_controller]
 pub struct Candidate {
     pub id: i32,
@@ -14,7 +20,10 @@ pub struct Candidate {
     pub Email: String,
 }
 
-#[derive(Debug)]
+//Generated file [Do not change]
+
+#[allow(non_snake_case)]
+#[derive(Debug,Clone,serde::Deserialize)]
 #[generate_controller]
 pub struct Job {
     pub Id: i32,
@@ -23,7 +32,10 @@ pub struct Job {
     pub LocationId: i32,
 }
 
-#[derive(Debug)]
+//Generated file [Do not change]
+
+#[allow(non_snake_case)]
+#[derive(Debug,Clone,serde::Deserialize)]
 #[generate_controller]
 pub struct Shifts {
     pub Id: i32,

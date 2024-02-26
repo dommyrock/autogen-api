@@ -28,7 +28,7 @@ async fn main() -> Result<(), sqlx::Error> {
 
         match &ast[0] {
             Statement::CreateTable { name, columns, .. } => {
-                let mut struct_def = format!("#[derive(Debug)]\n#[generate_controller]\npub struct {} {{\n", name);
+                let mut struct_def = format!("//Generated file [Do not change]\n\n#[allow(non_snake_case)]\n#[derive(Debug,Clone,serde::Deserialize)]\n#[generate_controller]\npub struct {} {{\n", name);
                 for column in columns {
                     let rust_type:&str= match &column.data_type {
                         DataType::Integer(_) => "i32",

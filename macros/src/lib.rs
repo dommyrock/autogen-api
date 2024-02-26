@@ -10,3 +10,5 @@ mod controllers;
 pub fn generate_controller(args: TokenStream, item: TokenStream) -> TokenStream {
     controllers::expand(args)
 }
+
+
