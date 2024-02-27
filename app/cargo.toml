@@ -1,0 +1,21 @@
+
+[package]
+name = "app"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+axum = { workspace = true }
+chrono = { workspace = true }
+serde = { workspace = true }
+sqlparser = { workspace = true }
+sqlx = { workspace = true }
+tokio = { workspace = true }
+autogen_macros = { workspace = true }
+
+
+[build-dependencies]
+sqlparser = { workspace = true }
+sqlx = { workspace = true, features = ["runtime-tokio-native-tls", "sqlite"] }
+tokio = { workspace = true, features = ["rt-multi-thread", "macros"] }

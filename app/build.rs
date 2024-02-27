@@ -21,6 +21,13 @@ async fn main() -> Result<(), sqlx::Error> {
     .fetch_all(&pool)
     .await?;
 
+    //Header
+    file.write_all(
+        format!("//Generated file [Do not change]\n\nuse autogen_macros::generate_controller;\n\n").as_bytes(),
+    )
+    .expect("Unable to write header");
+
+    //Struct definitions
     for row in rows {
         let sql: String = row.get("sql");
         let dialect = GenericDialect {};
@@ -28,9 +35,9 @@ async fn main() -> Result<(), sqlx::Error> {
 
         match &ast[0] {
             Statement::CreateTable { name, columns, .. } => {
-                let mut struct_def = format!("//Generated file [Do not change]\n\n#[allow(non_snake_case)]\n#[derive(Debug,Clone,serde::Deserialize)]\n#[generate_controller]\npub struct {} {{\n", name);
+                let mut struct_def = format!("#[allow(non_snake_case)]\n#[derive(Debug,Clone,serde::Deserialize)]\n#[generate_controller]\npub struct {} {{\n", name);
                 for column in columns {
-                    let rust_type:&str= match &column.data_type {
+                    let rust_type: &str = match &column.data_type {
                         DataType::Integer(_) => "i32",
                         DataType::BigInt(_) => "i64",
                         DataType::Real => "f64",
@@ -44,10 +51,10 @@ async fn main() -> Result<(), sqlx::Error> {
                         _ => "String",
                     };
 
-                    struct_def
-                        .push_str(&format!("    pub {}: {},\n", column.name, rust_type));
+                    struct_def.push_str(&format!("    pub {}: {},\n", column.name, rust_type));
                 }
-                struct_def.push_str("}\n\n");
+                struct_def.push_str("}\n");
+
                 file.write_all(struct_def.as_bytes())
                     .expect("Unable to write data");
             }

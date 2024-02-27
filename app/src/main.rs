@@ -5,10 +5,12 @@ use axum::response::IntoResponse;
 use axum::routing::get;
 use axum::{Json, Router};
 use serde::{de::DeserializeOwned, Deserialize};
+ 
 
 //local
 mod models;
 use models::{Candidate, Job, Location, Shifts};
+//Breaks because models.rs is broken at the moment  (Resolve macro  registration first)
 
 //Examples Generic route registration:
 //https://stackoverflow.com/questions/77851864/generic-route-for-generic-handler-with-axum

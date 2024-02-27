@@ -7,8 +7,8 @@ mod controllers;
 //https://github.com/cloudflare/foundations/tree/main/foundations-macros/src
 
 #[proc_macro_attribute]
-pub fn generate_controller(args: TokenStream, item: TokenStream) -> TokenStream {
-    controllers::expand(args)
+pub fn generate_controller(_args: TokenStream, item: TokenStream) -> TokenStream {
+    controllers::expand(item)
 }
 
 

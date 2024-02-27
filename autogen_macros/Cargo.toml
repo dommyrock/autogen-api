@@ -1,10 +1,10 @@
 [package]
-name = "macros"
+name = "autogen_macros"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-axum = "0.7.4"
+axum = { workspace = true }
 quote = "1.0.35"
 syn = "2.0.51"
 
