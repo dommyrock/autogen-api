@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Change to the directory of the script
+cd "$(dirname "$0")"
+
 # Create a new SQLite database
 sqlite3 db.db ".databases"
 
