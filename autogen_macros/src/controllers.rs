@@ -23,34 +23,6 @@ pub trait Controller: DeserializeOwned + Send + 'static {}
 async fn get_resource<R: Controller>(Json(_payload): Json<R>) -> impl IntoResponse {
     (StatusCode::OK, format!("Hi"))
 }
-
-
-//Example start
-// #[derive(Deserialize)]
-// struct Account {
-//     email: String,
-// }
-// trait Resource: DeserializeOwned + Send + 'static {}
-
-// async fn get_res<R: Resource>(Json(_payload): Json<R>) -> impl IntoResponse {
-//     (StatusCode::OK, format!("Hi"))
-// }
-
-//or
-// Use `impl IntoResponse` to avoid having to type the whole type
-// async fn impl_trait(uri: Uri) -> impl IntoResponse {
-//     (StatusCode::OK, format!("Not Found: {}", uri.path()))
-// }
-
-// fn resource_router<R: Resource>() -> Router {
-//     Router::new().route("/", get(get_res::<R>))
-// }
-//Example ends
-
-
-//I want something like this in the form of DI
-    https://github.com/tokio-rs/axum/discussions/358
-
 */
 
 pub(crate) fn expand(input: TokenStream) -> TokenStream {
@@ -94,3 +66,26 @@ pub fn generate_controller(_attr: TokenStream, item: TokenStream) -> TokenStream
     };
     output.into()
 }
+
+
+// macro_rules! impl_resource_create_router {
+//     ($($model:ty),*) => {{
+//         $(
+//             impl Resource for $model {}
+//         )*
+
+//         let mut router = Router::new();
+//         $(
+//             router = register::<$model>(router);
+//         )*
+//         router
+//     }};
+// }
+
+// fn register<T: Resource>(router: Router) -> Router {
+//     let type_name = std::any::type_name::<T>();
+//     let path = format!("/{}", type_name.split("::").last().unwrap().to_lowercase());
+//     router
+//         .route(&path, get(get_resource::<T>).post(post::<T>))
+//         .fallback(fb::<T>)
+// }

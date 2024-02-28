@@ -1,9 +1,8 @@
-use axum::http::StatusCode;
+use axum::http::{StatusCode, Uri};
 use axum::response::IntoResponse;
 use axum::routing::get;
 use axum::{Json, Router};
 
-//local deps
 mod models;
 use models::{Candidate, Job, Location, Shifts};
 
@@ -14,26 +13,30 @@ async fn get_resource<R: Resource>() -> impl IntoResponse {
     let msg = format!("Hello, World! from --> {type_namespace_name}");
     (StatusCode::OK, Json(msg))
 }
+async fn post<R: Resource>() -> impl IntoResponse {
+    (StatusCode::OK, "Entity updated")
+}
+async fn fb<R: Resource>(uri: Uri) -> impl IntoResponse {
+    (
+        StatusCode::NOT_FOUND,
+        format!("Route '{uri}' doesn't exist."),
+    )
+}
 
 fn register<T: Resource>(router: Router) -> Router {
     let type_name = std::any::type_name::<T>();
     let path = format!("/{}", type_name.split("::").last().unwrap().to_lowercase());
-    router.route(
-        &path,
-        get(get_resource::<T>), //.post(post_resource::<T>),
-    )
+    router
+        .route(&path, get(get_resource::<T>).post(post::<T>))
+        .fallback(fb::<T>)
 }
 
-macro_rules! impl_resource {
-    ($($t:ty),*) => {
-        $(
-            impl Resource for $t {}
-        )*
-    };
-}
-
-macro_rules! create_router {
+macro_rules! impl_resource_create_router {
     ($($model:ty),*) => {{
+        $(
+            impl Resource for $model {}
+        )*
+
         let mut router = Router::new();
         $(
             router = register::<$model>(router);
@@ -44,33 +47,14 @@ macro_rules! create_router {
 
 #[tokio::main]
 async fn main() -> Result<(), sqlx::Error> {
-    impl_resource!(Location, Candidate, Job, Shifts);
-    let app = create_router!(Location, Candidate, Job, Shifts);
-    let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
+    let app = impl_resource_create_router![Location, Candidate, Job, Shifts];
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:3000").await?;
+    
+    axum::serve(listener, app)
         .await
-        .unwrap();
-    axum::serve(listener, app).await.unwrap();
-
+        .expect("Failed to bind sever to localhost:3000");
     Ok(())
 }
-//Examples Generic route registration:
-//https://stackoverflow.com/questions/77851864/generic-route-for-generic-handler-with-axum
-//https://github.com/tokio-rs/axum/discussions/358
-//https://github.com/tokio-rs/axum/discussions/2184
-//https://docs.rs/axum/latest/axum/struct.Router.html
-//https://docs.rs/axum/latest/axum/response/index.html
-
-//server config example
-//https://stackoverflow.com/questions/74270324/axum-pass-parameters-to-handlers
-
-//SQLite types -> https://docs.rs/sqlx/latest/sqlx/sqlite/types
-//SQLX CLI     -> https://github.com/launchbadge/sqlx/blob/main/sqlx-cli/README.md
-
-//post
-// router.route(
-//     &format!("/{name}", name = name),
-//     get(get_resource::<T>), //.post(post_resource::<T>),
-// )
 
 //macro examples
 
