@@ -11,4 +11,8 @@ pub fn generate_controller(_args: TokenStream, item: TokenStream) -> TokenStream
     controllers::expand(item)
 }
 
+#[proc_macro_attribute]
+pub fn gen_v2(_args: TokenStream, item: TokenStream) -> TokenStream {
+    controllers::generate_controller(_args,item)
+}
 

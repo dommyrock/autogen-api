@@ -7,9 +7,6 @@ use sqlparser::parser::Parser;
 use std::fs::File;
 use std::io::Write;
 
-//SQLite types -> https://docs.rs/sqlx/latest/sqlx/sqlite/types
-//SQLX CLI     -> https://github.com/launchbadge/sqlx/blob/main/sqlx-cli/README.md
-
 #[tokio::main]
 async fn main() -> Result<(), sqlx::Error> {
     let mut file = File::create("./src/models.rs").expect("Unable to create file");
@@ -22,10 +19,11 @@ async fn main() -> Result<(), sqlx::Error> {
     .await?;
 
     //Header
-    file.write_all(
-        format!("//Generated file [Do not change]\n\nuse autogen_macros::generate_controller;\n\n").as_bytes(),
-    )
-    .expect("Unable to write header");
+    let header_msg = "//Generated file [Do not change]\n\n";
+    let header_imports = "use autogen_macros::generate_controller;\n";
+    let header_serde = r"use serde::{Serialize,Deserialize};";
+    file.write_all(format!("{header_msg}{header_imports}{header_serde}\n\n").as_bytes())
+        .expect("Unable to write header");
 
     //Struct definitions
     for row in rows {
@@ -35,7 +33,7 @@ async fn main() -> Result<(), sqlx::Error> {
 
         match &ast[0] {
             Statement::CreateTable { name, columns, .. } => {
-                let mut struct_def = format!("#[allow(non_snake_case)]\n#[derive(Debug,Clone,serde::Deserialize)]\n#[generate_controller]\npub struct {} {{\n", name);
+                let mut struct_def = format!("#[allow(non_snake_case)]\n#[derive(Debug,Clone,Serialize,Deserialize)]\npub struct {} {{\n", name);
                 for column in columns {
                     let rust_type: &str = match &column.data_type {
                         DataType::Integer(_) => "i32",
@@ -53,7 +51,7 @@ async fn main() -> Result<(), sqlx::Error> {
 
                     struct_def.push_str(&format!("    pub {}: {},\n", column.name, rust_type));
                 }
-                struct_def.push_str("}\n");
+                struct_def.push_str("}\n\n");
 
                 file.write_all(struct_def.as_bytes())
                     .expect("Unable to write data");

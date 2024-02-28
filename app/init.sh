@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Change to the directory of the script
+# Change to the directory of the <init.sh> script
 cd "$(dirname "$0")"
 
 # Create a new SQLite database
