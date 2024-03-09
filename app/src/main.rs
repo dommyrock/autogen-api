@@ -31,7 +31,7 @@ fn register<T: Resource>(router: Router) -> Router {
         .fallback(fb::<T>)
 }
 
-macro_rules! impl_resource_create_router {
+macro_rules! init {
     ($($model:ty),*) => {{
         $(
             impl Resource for $model {}
@@ -47,7 +47,7 @@ macro_rules! impl_resource_create_router {
 
 #[tokio::main]
 async fn main() -> Result<(), sqlx::Error> {
-    let app = impl_resource_create_router![Location, Candidate, Job, Shifts];
+    let app = init![Location, Candidate, Job, Shifts];
     let listener = tokio::net::TcpListener::bind("127.0.0.1:3000").await?;
     
     axum::serve(listener, app)
