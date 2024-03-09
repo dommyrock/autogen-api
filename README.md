@@ -1,7 +1,4 @@
 
-
-
-
 ### Helpfull links
 
 Axum and Server Config Links:
@@ -68,15 +65,18 @@ Expands to
 
 ### Notes 
 
->Unfortunately, procedural macros in Rust don’t have the ability to see the entire crate at once. 
-They are **invoked on a per-item basis**, meaning they only see the specific item they are applied to. 
+>Unfortunately, procedural macros in Rust don’t have the ability to see the entire crate at once.<br/>
+They are **invoked on a per-item basis**, meaning they only see the specific item they are applied to. <br/>
 This is a limitation of the current design of procedural macros in Rust.
 
-There are workarounds to this limitation. 
-Another approach is to use a single macro invocation that takes the names of all the structs as arguments. This way, you can generate the code for all the structs at once.
-This approach I used here.
+There are workarounds to this limitation.<br/>
+Another approach is to use a single macro invocation that takes the names of all the structs as arguments.<br/>
+This way, you can generate the code for all the structs at once.
 
-Other approach is to use a separate build script (a build.rs file in your crate root) that scans your crate for items annotated with a specific attribute and generates code based on those items. This approach gives you more control and flexibility, but it also requires more setup and complexity.
+**This approach is used here.**
+
+>Other approach is to use a separate build script (a build.rs file in your crate root) that scans your crate for items annotated with a specific attribute and generates code based on those items.<br/>
+>This approach gives you more control and flexibility, but it also requires more setup and complexity.
 
 something like this 
 ```rust
