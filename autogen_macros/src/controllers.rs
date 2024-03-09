@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use axum::http::{StatusCode, Uri};
 use axum::response::IntoResponse;
 use axum::routing::get;
@@ -42,7 +44,7 @@ pub fn generate_controller(_attr: TokenStream, item: TokenStream) -> TokenStream
 }
 
 
-macro_rules! impl_resource_create_router {
+macro_rules! init {
     ($($model:ty),*) => {{
         $(
             impl Resource for $model {}

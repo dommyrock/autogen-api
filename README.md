@@ -22,13 +22,15 @@ Sqlx Links:
 
 [SQLX CLI](https://github.com/launchbadge/sqlx/blob/main/sqlx-cli/README.md)
 
+### autogen_macros proj is just an exmaple
+> no actually used here since macro_rules! init is better fit here 
 
 ### Macro expansion
 
 Current macro that handles code gen that connects model + Routes
 
 ```rust
-macro_rules! impl_resource_create_router {
+macro_rules! init {
     ($($model:ty),*) => {{
         $(
             impl Resource for $model {}
@@ -43,6 +45,12 @@ macro_rules! impl_resource_create_router {
 }
 ```
 
+```bash
+cd ./app && cargo expand
+
+# or filter fn main (first 50 lines)
+cd ./app && cargo expand > main.rs && grep -A50 "fn main" main.rs
+```
 Expands to
 
 ```rust
